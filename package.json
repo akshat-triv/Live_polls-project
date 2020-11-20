@@ -1,0 +1,23 @@
+{
+  "name": "live-polling",
+  "version": "1.0.0",
+  "description": "Create live polls",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "author": "Akshat Trivedi",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mysql": "^2.18.1",
+    "pug": "^3.0.0",
+    "socket.io": "^3.0.1",
+    "uniqid": "^5.2.0"
+  },
+  "devDependencies": {
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.6"
+  }
+}

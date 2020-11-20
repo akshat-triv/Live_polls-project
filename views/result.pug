@@ -1,0 +1,188 @@
+doctype html
+html(lang='en')
+    head
+        meta(charset='UTF-8')
+        meta(name='viewport' content='width=device-width, initial-scale=1.0')
+        title Live Polling
+        link(rel='stylesheet' href='/css/style.css')
+        link(rel='preconnect' href='https://fonts.gstatic.com')
+        link(href='https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap' rel='stylesheet')
+    body    
+        .line
+        header
+            .hero
+                a(href="/")
+                    .hero__headings
+                        h1 Create Live Polls
+                        h3(style='text-align: center;') A project by Akshat Trivedi
+        main
+            .poll.poll-results(data-id=`${poll.poll_id}`)
+                h1.question #{poll.name}
+                .poll__content
+                    .poll__options
+                        each option,i in options
+                            .poll__option.result(id=`${option.option_id}` data-votes=`${option.votes}`)
+                                span.poll__option-name
+                                    | #{option.name}
+                                - var per= poll.votes ? Math.round(option.votes*100/poll.votes): 0;    
+                                span.poll__option-percentage=`${per}%`
+                                .poll__option-progress(data-per=`${per}`)
+                                .poll__option-nvotes #{option.votes} Votes
+                    .poll__details
+                        span.poll__details-total #{poll.votes}
+                        .poll__details-share
+                            span Share
+                            .poll__details-share-icons
+                                a.poll__details-share-icon(href=`https://www.facebook.com/sharer.php?u=`)
+                                    svg.poll__details-share-icon(style='fill:#3489db;')
+                                        use(xlink:href='/svg/sprite.svg#icon-facebook-with-circle')
+                                a.poll__details-share-icon(href=`https://www.linkedin.com/shareArticle?url=`)
+                                    svg.poll__details-share-icon(style='fill:#0e76a8;')
+                                        use(xlink:href='/svg/sprite.svg#icon-linkedin-with-circle')
+                                a.poll__details-share-icon(href='#')
+                                    svg.poll__details-share-icon(style='fill:#f4a000;')
+                                        use(xlink:href='/svg/sprite.svg#icon-copy')
+                                a.poll__details-share-icon(href='#')
+                                    svg.poll__details-share-icon(style='fill:#0f9d58;')
+                                        use(xlink:href='/svg/sprite.svg#icon-facebook-with-circle')
+                        button#create.poll__btn Create a new poll
+                        button#delete.poll__btn Delete my poll                
+            h3.footer__heading(style='text-align: center;margin-top: 15rem;')
+                | Inspired by 
+                a(href='https://rapid-poll.vercel.app/' style='color: #3489db;' target='__blank')
+                    | Rapid
+                    | poll
+        script(src='/jquery/dist/jquery.min.js')
+        script(src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js")
+        script(src="/socket.io/socket.io.js")
+        script.
+            let total = ($('.poll__details-total').text()) * 1;
+            let optionsVotes = [];
+            let height = $('.result').outerHeight();
+            let options = $('.poll__options').children(),option,per,count=0,
+            noptions=options.length;
+            const poll_id = $('.poll').attr('data-id');
+            const socket = io(`/${poll_id}`);
+
+            function updateOrder(index1,index2){
+                if(index2<0) return;
+                let currObj = optionsVotes[index1],precObj = optionsVotes[index2];
+                if(currObj.vote > precObj.vote){
+                    count++;
+                    updateOrder(index1,index2-1);
+                }else{
+                    return;
+                }
+                if(count===0) return;
+
+                optionsVotes.splice(index1,1);
+                optionsVotes.splice(index1-count,0,currObj);
+                count=0;
+            }
+
+            function alerting(inner, type) {
+            $('body').prepend(`<div class="alert alert--${type}" style="z-index:12000;">${inner}</div>`);
+            setTimeout(() => {
+            $('body').children().remove('.alert');
+            }, 5000);
+            }
+
+            async function sendDelete(){
+                let res = await axios({
+                    method:'DELETE',
+                    url:`/api/v1/poll/${poll_id}`
+                });
+                //console.log(res.data);
+                alerting(res.data.message, res.data.status);
+            }
+
+            function updateProgress(el){
+                let obj = optionsVotes.find((e)=>e.option===el.id);
+                let votes = obj.vote;
+                per = total ? Math.round(votes*100/total) : 0; 
+                $(el).find('.poll__option-nvotes').text(`${votes} Votes`)
+                $(el).find('.poll__option-percentage').text(`${per}%`);
+                option = $(el).find('.poll__option-progress');
+                option.css("background-image",`linear-gradient(to right, #3489db ${per}%, #e2e8f0 ${per}%)`);
+            }
+
+            function add(id){
+                total++;
+                $('.poll__details-total').text(total);
+                let val = optionsVotes.find((e)=>e.option===id);
+                val = val[`vote`];
+                val = (val * 1) + 1;
+                let index = optionsVotes.findIndex((e)=>e.option===id);
+                let tmp = {}
+                tmp.option = id;
+                tmp[`vote`] = val;
+                optionsVotes[index] = tmp;
+                for(var el of options){
+                    updateProgress(el);
+                }
+                updateOrder(index,index-1);
+                height=0;
+                for(i=0;i<noptions;i++){
+                    let curr;
+                    curr = optionsVotes[i];
+                    $(`#${curr.option}`).css('transform',`translateY(${height}px)`);
+                    height = height + $(`#${curr.option}`).outerHeight() + 40;
+                }
+            }
+
+            socket.on('connected',(msg)=>{
+                console.log(`You're connected on ${msg}`);
+            });
+
+            socket.on('voteOut',(id)=>{
+                add(id);
+            })
+
+            $('.poll__details').on('click',function(e){
+                e.stopPropagation();
+                if(e.target.id==='create'){
+                    window.open('/','_blank');
+                }else if(e.target.id==='delete'){
+                    const markup = `<div class="cover"><div class="cover__box"><div class="cover__box-main"><p class="lines">Are you sure ?</p><button class="poll__btn" id="create">No</button><button class="poll__btn" id="delete">Yes</button></div></div></div>`
+                    $('body').prepend(markup);
+                    $('.cover').css('display','block');
+                }
+            })
+
+            $('body').on('click',async function(e){
+                if(e.target.id==='create'){
+                    $('.cover').css('display','none');
+                    $('.cover').remove();
+                }else if(e.target.id==='delete'){
+                    await sendDelete();
+                    setTimeout(()=>{
+                        location.assign('/');
+                    },4000);
+                }
+            })
+
+            window.addEventListener('load',()=>{
+                $('.poll__options').outerHeight(`${noptions*(height+40)}`);
+                $('.poll__content').outerHeight(`${noptions*(height+80)}`);
+                let i=0;
+                for(var el of options){
+                    let id = el.id; 
+                    let tmp = {};
+                    tmp.option= id;
+                    tmp['vote']=el.dataset.votes *1;
+                    optionsVotes.push(tmp);
+                    updateProgress(el);
+                    i++;
+                }
+
+                for(i=0;i<noptions;i++){
+                     updateOrder(i,i-1);
+                }
+                height=0;
+                for(i=0;i<noptions;i++){
+                    let curr;
+                    curr = optionsVotes[i];
+                    $(`#${curr.option}`).css('transform',`translateY(${height}px)`);
+                    height = height + $(`#${curr.option}`).outerHeight() + 40;
+                }
+            });

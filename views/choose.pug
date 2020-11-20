@@ -1,0 +1,103 @@
+doctype html
+html(lang='en')
+    head
+        meta(charset='UTF-8')
+        meta(name='viewport' content='width=device-width, initial-scale=1.0')
+        title Live Polling
+        link(rel='stylesheet' href='/css/style.css')
+        link(rel='preconnect' href='https://fonts.gstatic.com')
+        link(href='https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap' rel='stylesheet')
+    body    
+        .line
+        header
+            .hero
+                a(href="/")
+                    .hero__headings
+                        h1 Create Live Polls
+                        h3(style='text-align: center;') A project by Akshat Trivedi
+        main
+            .poll(data-votes=`${poll.votes}` data-id=`${poll.poll_id}`)
+                h1.question #{poll.name}
+                .poll__options
+                    each option,i in options
+                        .poll__option.choose(data-votes=`${option.votes}` id=`${option.option_id}`)
+                            span.poll__option-name
+                                | #{option.name}
+                            span.poll__option-percentage
+                .total=`${poll.votes} Votes`                
+            h3(style='text-align: center;margin-top: 15rem;')
+                | Inspired by 
+                a(href='https://rapid-poll.vercel.app/' style='color: #3489db;' target='__blank')
+                    | Rapid
+                    | poll
+        script(src='/jquery/dist/jquery.min.js')
+        script(src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js")
+        script(src="/socket.io/socket.io.js")
+        script.
+            const poll_id = $('.poll').attr('data-id');
+            const socket = io(`/${poll_id}`);
+
+            async function send(poll_id,option_id){
+                res = await axios({
+                    method:'GET',
+                    url:`/api/v1/poll/vote/${poll_id}/${option_id}`
+                });
+            }
+
+            socket.on('connected',(msg)=>{
+                console.log(`You're connected on ${msg}`);
+            });
+
+            function emiting(id){
+                socket.emit('voteIncoming',id,poll_id);
+            }
+
+            function showAll(){
+                $('.poll__option-name').css('width','80%');
+                for (el of $('.poll__options').children()) {
+                    let per = el.dataset.votes * 1;
+                    per = Math.round(per * 100 / total);
+                    document.getElementById(el.id).style.backgroundImage = `linear-gradient(to right,rgba(52, 137, 219, 0.5) ${per}%, #fff ${per}%)`;
+                    $(el).find('.poll__option-percentage').text(`${per}%`).addClass('poll__option-percentage--show');
+                }
+            }
+
+            let total = $('.poll').attr('data-votes') * 1, count = 0;
+
+            function alerting(inner, type) {
+            $('body').prepend(`<div class="alert alert--${type}">${inner}</div>`);
+            setTimeout(() => {
+            $('body').children().remove('.alert');
+            }, 5000);
+            }
+
+            window.addEventListener('load',function(){
+                let option_id = localStorage.getItem(poll_id);
+                if(option_id && document.getElementById(option_id)){
+                    $(`#${option_id}`).addClass('choose--selected');
+                    let which = $(`#${option_id}`).text();
+                    showAll();
+                    alerting(`You voted ${which}`,'success');
+                    count++;
+                }
+            })
+
+
+            $('.poll__options').on('click', async function (e) {
+            if (count == 0) {
+            let el = e.target.closest('.poll__option');
+            el.classList.add('choose--selected');
+            el.dataset.votes = el.dataset.votes * 1 + 1;
+            let selected = el.id;
+            emiting(el.id);
+            total++;
+            $('.total').text(`${total} Votes`);
+            showAll();
+            count++;
+            await send(poll_id,selected);
+            localStorage.setItem(poll_id,selected);
+            alerting('Thanks for voting.<br>Your response has been recorded.', 'success');
+            } else {
+            alerting('Sorry you cannot change your vote now.', 'fail');
+            }
+            })
