@@ -4,6 +4,34 @@
     {
       "icon": {
         "paths": [
+          "M128 470h342v-342h-342v342zM214 214h170v170h-170v-170zM128 896h342v-342h-342v342zM214 640h170v170h-170v-170zM554 128v342h342v-342h-342zM810 384h-170v-170h170v170zM810 810h86v86h-86v-86zM554 554h86v86h-86v-86zM640 640h86v86h-86v-86zM554 726h86v84h-86v-84zM640 810h86v86h-86v-86zM726 726h84v84h-84v-84zM726 554h84v86h-84v-86zM810 640h86v86h-86v-86z"
+        ],
+        "attrs": [
+          {}
+        ],
+        "isMulticolor": false,
+        "isMulticolor2": false,
+        "tags": [
+          "qr_code"
+        ],
+        "grid": 24
+      },
+      "attrs": [
+        {}
+      ],
+      "properties": {
+        "order": 1,
+        "id": 0,
+        "prevSize": 24,
+        "name": "qr_code"
+      },
+      "setIdx": 0,
+      "setId": 4,
+      "iconIdx": 0
+    },
+    {
+      "icon": {
+        "paths": [
           "M512 81.92c-237.517 0-430.080 192.563-430.080 430.080s192.563 430.080 430.080 430.080 430.080-192.563 430.080-430.080c0-237.517-192.563-430.080-430.080-430.080zM757.197 668.723l-88.525 88.525-156.672-156.723-156.723 156.672-88.525-88.525 156.774-156.672-156.723-156.723 88.525-88.474 156.672 156.672 156.723-156.723 88.525 88.525-156.774 156.723 156.723 156.723z"
         ],
         "attrs": [],
@@ -21,7 +49,7 @@
         "prevSize": 20,
         "name": "circle-with-cross"
       },
-      "setIdx": 1,
+      "setIdx": 2,
       "setId": 2,
       "iconIdx": 126
     },
@@ -45,7 +73,7 @@
         "prevSize": 20,
         "name": "copy"
       },
-      "setIdx": 1,
+      "setIdx": 2,
       "setId": 2,
       "iconIdx": 138
     },
@@ -69,7 +97,7 @@
         "prevSize": 20,
         "name": "facebook-with-circle"
       },
-      "setIdx": 1,
+      "setIdx": 2,
       "setId": 2,
       "iconIdx": 358
     },
@@ -93,7 +121,7 @@
         "prevSize": 20,
         "name": "linkedin-with-circle"
       },
-      "setIdx": 1,
+      "setIdx": 2,
       "setId": 2,
       "iconIdx": 370
     }

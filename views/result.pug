@@ -7,6 +7,7 @@ html(lang='en')
         link(rel='stylesheet' href='/css/style.css')
         link(rel='preconnect' href='https://fonts.gstatic.com')
         link(href='https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap' rel='stylesheet')
+        include favicon
     body    
         .line
         header
@@ -33,26 +34,29 @@ html(lang='en')
                         .poll__details-share
                             span Share
                             .poll__details-share-icons
-                                a.poll__details-share-icon(href=`https://www.facebook.com/sharer.php?u=`)
+                                a.poll__details-share-icon(href=`https://www.facebook.com/sharer.php?u=https://livepolls.akshattrivedi.tk/poll/${poll.poll_id}` target="_blank")
                                     svg.poll__details-share-icon(style='fill:#3489db;')
                                         use(xlink:href='/svg/sprite.svg#icon-facebook-with-circle')
-                                a.poll__details-share-icon(href=`https://www.linkedin.com/shareArticle?url=`)
+                                a.poll__details-share-icon(href=`https://www.linkedin.com/shareArticle?url=https://livepolls.akshattrivedi.tk/poll/${poll.poll_id}` target="_blank")
                                     svg.poll__details-share-icon(style='fill:#0e76a8;')
                                         use(xlink:href='/svg/sprite.svg#icon-linkedin-with-circle')
-                                a.poll__details-share-icon(href='#')
+                                a.poll__details-share-icon(href='#copy')
                                     svg.poll__details-share-icon(style='fill:#f4a000;')
                                         use(xlink:href='/svg/sprite.svg#icon-copy')
-                                a.poll__details-share-icon(href='#')
+                                a.poll__details-share-icon(href='#qrcode')
                                     svg.poll__details-share-icon(style='fill:#0f9d58;')
-                                        use(xlink:href='/svg/sprite.svg#icon-facebook-with-circle')
+                                        use(xlink:href='/svg/sprite.svg#icon-qr_code')
+                                input#copy_input(type="text" value=`https://livepolls.akshattrivedi.tk/poll/${poll.poll_id}` style="position:absolute;z-index:-500;")        
                         button#create.poll__btn Create a new poll
                         button#delete.poll__btn Delete my poll                
+                        
             h3.footer__heading(style='text-align: center;margin-top: 15rem;')
                 | Inspired by 
                 a(href='https://rapid-poll.vercel.app/' style='color: #3489db;' target='__blank')
                     | Rapid
                     | poll
         script(src='/jquery/dist/jquery.min.js')
+        script(src='/build/qrcode.min.js')
         script(src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js")
         script(src="/socket.io/socket.io.js")
         script.
@@ -138,6 +142,23 @@ html(lang='en')
                 add(id);
             })
 
+            window.addEventListener('hashchange',function(e){
+                if(location.hash==='#copy'){
+                    document.querySelector('#copy_input').select();
+                    document.execCommand('copy');
+                    alerting('Copied to clipboard', 'success');
+                }else if(location.hash==='#qrcode'){
+                    let link = document.getElementById('copy_input').value;
+                    const markup = `<div class="cover"  id="cover"><div class="cover__box cover__box-canvas"><div class="cover__box-main"><p class="lines" style="text-align:center;">QR code for participants to vote</p><canvas id="canvas"></canvas></div></div></div>`
+                    $('body').prepend(markup);
+                    $('.cover').css('display','block');
+                    QRCode.toCanvas(document.getElementById('canvas'),link, function (error) {
+                        if (error) console.error(error)
+                            alerting('QrCode generated successfully','success');
+                        })
+                }
+            })
+
             $('.poll__details').on('click',function(e){
                 e.stopPropagation();
                 if(e.target.id==='create'){
@@ -150,6 +171,11 @@ html(lang='en')
             })
 
             $('body').on('click',async function(e){
+                if(e.target.id==='cover'){
+                    $('.cover').css('display','none');
+                    $('.cover').remove();
+                }
+
                 if(e.target.id==='create'){
                     $('.cover').css('display','none');
                     $('.cover').remove();
@@ -159,6 +185,11 @@ html(lang='en')
                         location.assign('/');
                     },4000);
                 }
+            })
+
+            $('#cross').on('click',function(){
+                console.log('hi');
+                $('.cover').remove();
             })
 
             window.addEventListener('load',()=>{

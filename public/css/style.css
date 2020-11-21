@@ -212,11 +212,35 @@ a:active {
   overflow: hidden;
 }
 
+.cover__box-canvas {
+  width: 350px !important;
+}
+
+#canvas {
+  width: 250px !important;
+  height: 250px !important;
+  display: block;
+  margin: 4rem auto 6rem auto;
+}
+
+#cross {
+  position: absolute;
+  top: 0;
+  right: 10px;
+  font-size: 3rem;
+}
+
+#cross:hover {
+  cursor: pointer;
+}
+
 #create {
   margin-right: 2rem;
   background-color: #4285f4 !important;
   padding: 1rem;
   font-weight: 600;
+  position: relative;
+  z-index: 10;
   letter-spacing: 1px;
 }
 
@@ -310,7 +334,25 @@ a:active {
 }
 @media only screen and (max-width: 37.5em) {
   .question {
-    font-size: 5rem;
+    font-size: 4.3rem;
+  }
+  .poll__option-name {
+    font-size: 3rem !important;
+  }
+  .poll__option-percentage {
+    font-size: 3rem !important;
+  }
+  .alert {
+    font-size: 2rem !important;
+  }
+  .cover__box-canvas {
+    width: 90% !important;
+  }
+  .lines {
+    font-size: 2.2rem;
+  }
+  #cross {
+    font-size: 4rem;
   }
 }
 
@@ -502,7 +544,7 @@ a:active {
 }
 .poll__details-share-icons {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
 }
 @media only screen and (max-width: 56.25em) {
@@ -510,6 +552,27 @@ a:active {
     justify-content: flex-start;
   }
 }
+#copy_input {
+  position: absolute;
+  z-index: -500;
+  color: #fcfcfc;
+  background-color: #fcfcfc;
+  border: none;
+  outline: none;
+}
+
+#copy_input::selection {
+  color: #fcfcfc;
+  background-color: #fcfcfc;
+  border: 1px solid #fcfcfc;
+  outline: 1px solid #fcfcfc;
+}
+
+#copy_input:focus {
+  outline: none;
+  border: none;
+}
+
 .poll__details-share span {
   font-size: 2rem;
   color: #999;

@@ -16,6 +16,7 @@
     "mysql": "^2.18.1",
     "parcel-bundler": "^1.12.4",
     "pug": "^3.0.0",
+    "qrcode": "^1.4.4",
     "socket.io": "^3.0.1",
     "uniqid": "^5.2.0"
   },
