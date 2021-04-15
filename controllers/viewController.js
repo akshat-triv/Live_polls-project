@@ -32,6 +32,7 @@ exports.getPoll = catchAsync(async (req, res, next) => {
       res.status(200).render(page, {
         poll,
         options,
+        hostName: `${req.protocol}://${req.headers.host}`,
       });
     });
   });

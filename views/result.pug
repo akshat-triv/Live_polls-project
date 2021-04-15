@@ -35,10 +35,10 @@ html(lang='en')
                         .poll__details-share
                             span Share
                             .poll__details-share-icons
-                                a.poll__details-share-icon(href=`https://www.facebook.com/sharer.php?u=https://livepolls.akshattrivedi.tk/poll/${poll.poll_id}` target="_blank")
+                                a.poll__details-share-icon(href=`https://www.facebook.com/sharer.php?u=${hostName}/poll/${poll.poll_id}` target="_blank")
                                     svg.poll__details-share-icon(style='fill:#3489db;')
                                         use(xlink:href='/svg/sprite.svg#icon-facebook-with-circle')
-                                a.poll__details-share-icon(href=`https://www.linkedin.com/shareArticle?url=https://livepolls.akshattrivedi.tk/poll/${poll.poll_id}` target="_blank")
+                                a.poll__details-share-icon(href=`https://www.linkedin.com/shareArticle?url=${hostName}/poll/${poll.poll_id}` target="_blank")
                                     svg.poll__details-share-icon(style='fill:#0e76a8;')
                                         use(xlink:href='/svg/sprite.svg#icon-linkedin-with-circle')
                                 a.poll__details-share-icon(href='#copy')
@@ -47,7 +47,7 @@ html(lang='en')
                                 a.poll__details-share-icon(href='#qrcode')
                                     svg.poll__details-share-icon(style='fill:#0f9d58;')
                                         use(xlink:href='/svg/sprite.svg#icon-qr_code')
-                                input#copy_input(type="text" value=`https://livepolls.akshattrivedi.tk/poll/${poll.poll_id}` style="position:absolute;z-index:-500;")        
+                                input#copy_input(type="text" value=`${hostName}/poll/${poll.poll_id}` style="position:absolute;z-index:-500;")        
                         button#create.poll__btn Create a new poll
                         button#delete.poll__btn Delete my poll                
                         
@@ -217,4 +217,4 @@ html(lang='en')
                     $(`#${curr.option}`).css('transform',`translateY(${height}px)`);
                     height = height + $(`#${curr.option}`).outerHeight() + 40;
                 }
-            });
+            });         
