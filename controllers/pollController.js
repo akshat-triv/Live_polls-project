@@ -41,6 +41,7 @@ exports.createPoll = catchAsync(async (req, res, next) => {
     status: 'success',
     message: 'poll created successfuly',
     data: {
+      hostName: `${req.protocol}://${req.headers.host}`,
       poll_id,
       admin_id,
     },

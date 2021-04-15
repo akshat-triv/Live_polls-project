@@ -3,8 +3,10 @@ const Option = require('./../models/optionModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 
-exports.getOverview = (req, res, next) => {
-  res.status(200).render('home');
+exports.getOverview = (req, res) => {
+  res.status(200).render('home', {
+    hostName: `${req.protocol}://${req.headers.host}`,
+  });
 };
 
 exports.getPoll = catchAsync(async (req, res, next) => {

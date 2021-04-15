@@ -1,19 +1,13 @@
-export function setLink(poll_id, admin_id) {
-  $('#poll_link').attr(
-    'value',
-    `https://livepolls.akshattrivedi.tk/poll/${poll_id}`
-  );
+export function setLink(host_name, poll_id, admin_id) {
+  $('#poll_link').attr('value', `${host_name}/poll/${poll_id}`);
   $('#admin_link').attr(
     'value',
-    `https://livepolls.akshattrivedi.tk/poll/admin/${poll_id}/${admin_id}`
+    `${host_name}/poll/admin/${poll_id}/${admin_id}`
   );
-  $('#poll_anchor').attr(
-    'href',
-    `https://livepolls.akshattrivedi.tk/poll/${poll_id}`
-  );
+  $('#poll_anchor').attr('href', `${host_name}/poll/${poll_id}`);
   $('#admin_anchor').attr(
     'href',
-    `https://livepolls.akshattrivedi.tk/poll/admin/${poll_id}/${admin_id}`
+    `${host_name}/poll/admin/${poll_id}/${admin_id}`
   );
 }
 

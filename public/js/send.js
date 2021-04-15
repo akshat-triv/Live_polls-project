@@ -8,6 +8,6 @@ export async function createPoll(pollObj) {
     data: pollObj,
   });
   res = res.data;
-  setLink(res.data.poll_id, res.data.admin_id);
+  setLink(res.data.hostName, res.data.poll_id, res.data.admin_id);
   alerting(res.message, res.status);
 }
