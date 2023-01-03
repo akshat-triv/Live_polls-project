@@ -87,7 +87,9 @@ exports.updatePoll = catchAsync(async (req, res, next) => {
 
 exports.deletePoll = catchAsync(async (req, res, next) => {
   const poll_id = req.params.poll_id;
-  new Poll(undefined, poll_id).delete();
+  const poll = new Poll(undefined, poll_id);
+  poll.deleteAllOptions();
+  poll.delete();
 
   res
     .status(200)

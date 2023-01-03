@@ -23,14 +23,10 @@ class Poll {
     return this;
   }
   deleteAllOptions() {
-    let tmp = {};
-    tmp['poll_id'] = this.poll_id;
-    DB.deleteAll(tmp, 'options');
+    DB.deleteAll(this.poll_id, 'options');
   }
   delete() {
-    let tmp = {};
-    tmp['poll_id'] = this.poll_id;
-    DB.deleteAll(tmp, 'polls');
+    DB.deleteAll(this.poll_id, 'polls');
   }
   updateVotes() {
     DB.vote(this.poll_id, 'polls');
