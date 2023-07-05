@@ -9,7 +9,10 @@ class Poll {
     this.admin = uniqid.process();
   }
   save() {
-    DB.save(this, 'polls');
+    DB.save(this, 'polls', (err) => {
+      if (!err) return this;
+      return err;
+    });
     return this;
   }
   find(callback) {
@@ -19,8 +22,10 @@ class Poll {
     });
   }
   update() {
-    DB.update(this, 'polls');
-    return this;
+    DB.update(this, 'polls', (err) => {
+      if (!err) return this;
+      return err;
+    });
   }
   deleteAllOptions() {
     DB.deleteAll(this.poll_id, 'options');

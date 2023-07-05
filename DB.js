@@ -3,8 +3,10 @@ const { Client } = pg;
 
 const AppError = require('./utils/appError');
 
+let DATABASE_CONNECTED = false;
+
 const client = new Client({
-  host: 'db.nbjbkqzbscimqtguvbcu.supabase.co',
+  host: process.env.DB_HOST,
   user: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DBNAME,
@@ -12,11 +14,22 @@ const client = new Client({
 });
 
 client.connect(function (err) {
-  if (err) console.log(err);
-  else console.log('DataBase connected');
+  if (err) {
+    console.log(err);
+    return;
+  }
+  console.log('DataBase connected');
+  DATABASE_CONNECTED = true;
 });
 
 exports.save = async (obj, which) => {
+  if (!DATABASE_CONNECTED) {
+    callback(
+      new AppError('Database is turned off, please start it in Supabase', 500)
+    );
+    return;
+  }
+
   const query = {
     text: `INSERT INTO ${which}(${Object.keys(obj).join(
       ','
@@ -32,6 +45,13 @@ exports.save = async (obj, which) => {
 };
 
 exports.find = async (id, which, callback) => {
+  if (!DATABASE_CONNECTED) {
+    callback(
+      new AppError('Database is turned off, please start it in Supabase', 500)
+    );
+    return;
+  }
+
   const query = {
     text: `SELECT * FROM ${which} WHERE poll_id = $1`,
     values: [id.poll_id],
@@ -54,18 +74,38 @@ exports.find = async (id, which, callback) => {
 };
 
 exports.update = (obj, which) => {
+  if (!DATABASE_CONNECTED) {
+    callback(
+      new AppError('Database is turned off, please start it in Supabase', 500)
+    );
+    return;
+  }
+
   client.query(`UPDATE ${which} SET ?`, [obj], function (err) {
     if (err) return new AppError(err.message, '400');
   });
 };
 
 exports.deleteAll = (id, which) => {
+  if (!DATABASE_CONNECTED) {
+    callback(
+      new AppError('Database is turned off, please start it in Supabase', 500)
+    );
+    return;
+  }
+
   client.query(`DELETE FROM ${which} WHERE poll_id = $1`, [id], function (err) {
     if (err) return new AppError(err.message, '400');
   });
 };
 
 exports.vote = (id, which) => {
+  if (!DATABASE_CONNECTED) {
+    callback(
+      new AppError('Database is turned off, please start it in Supabase', 500)
+    );
+    return;
+  }
   const columnName = which === 'options' ? 'option_id' : 'poll_id';
 
   client.query(

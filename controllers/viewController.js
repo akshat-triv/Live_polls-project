@@ -13,13 +13,14 @@ exports.getPoll = catchAsync(async (req, res, next) => {
   const poll_id = req.params.poll_id;
   const admin_id = req.params.admin_id;
   let page = 'choose';
-  console.log(req.originalUrl);
 
   if (req.originalUrl.split('/').includes('admin')) {
     page = 'result';
   }
 
   new Poll(undefined, poll_id).find((poll) => {
+    if (poll instanceof AppError) return next(new AppError(poll.message, 500));
+
     new Option(undefined, poll_id, undefined).find((options) => {
       if (!poll.name) {
         return next(new AppError('No such poll exists', 404));
