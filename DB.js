@@ -6,11 +6,7 @@ const AppError = require('./utils/appError');
 let DATABASE_CONNECTED = false;
 
 const client = new Client({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DBNAME,
-  port: 5432,
+  connectionString: process.env.DATABASE_URL
 });
 
 client.connect(function (err) {
